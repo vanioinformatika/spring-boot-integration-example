@@ -70,6 +70,9 @@ public class DummyDataSource implements DataSource {
         public int read() throws IOException {
             if (pos < contentLength) {
                 pos++;
+                if (pos % (10 * 1024 * 1024) == 0) {
+                    System.out.println((pos / (1024 * 1024)) + " MB read");
+                }
                 return contentByte;
             } else {
                 return -1;
