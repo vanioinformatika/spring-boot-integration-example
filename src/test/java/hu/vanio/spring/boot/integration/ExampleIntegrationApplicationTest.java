@@ -1,4 +1,4 @@
-package hu.vanio.spring.boot.integration.tests;
+package hu.vanio.spring.boot.integration;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +17,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StopWatch;
 
-import hu.vanio.spring.boot.integration.ExampleIntegrationApplication;
 import hu.vanio.spring.boot.integration.client.JaxWsClient;
 
 /**
@@ -32,9 +31,6 @@ public class ExampleIntegrationApplicationTest {
 
     /** Webservice client */
     private final static JaxWsClient client = new JaxWsClient();
-    
-    /** Test content URL */
-    static public final URL TEST_CONTENT_URL = Thread.currentThread().getContextClassLoader().getResource("spring-ws-logo.png");
     
     @BeforeClass
     public static void start() throws Exception {

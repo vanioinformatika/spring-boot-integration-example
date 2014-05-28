@@ -1,4 +1,4 @@
-package hu.vanio.spring.boot.integration.tests;
+package hu.vanio.spring.boot.integration;
 
 import java.io.IOException;
 import java.io.InputStream;
