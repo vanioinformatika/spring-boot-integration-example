@@ -11,6 +11,8 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.WsdlDefinition;
 import org.springframework.ws.wsdl.wsdl11.SimpleWsdl11Definition;
+import org.springframework.xml.xsd.SimpleXsdSchema;
+import org.springframework.xml.xsd.XsdSchema;
 
 @Configuration
 @EnableAutoConfiguration
@@ -34,6 +36,13 @@ public class ExampleIntegrationApplication {
     @Bean
     public WsdlDefinition contentStore() {
         return new SimpleWsdl11Definition(new ClassPathResource("/contentStore.wsdl"));
+    }
+    
+    @Bean
+    public XsdSchema contentStoreSchema() {
+        SimpleXsdSchema xsdSchema = new SimpleXsdSchema();
+        xsdSchema.setXsd(new ClassPathResource("contentStoreSchema.xsd"));
+        return xsdSchema;
     }
     
     @Bean
