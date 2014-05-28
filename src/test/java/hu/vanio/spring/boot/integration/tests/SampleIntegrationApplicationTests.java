@@ -1,13 +1,12 @@
 package hu.vanio.spring.boot.integration.tests;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
 import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.activation.URLDataSource;
 
 import org.junit.AfterClass;
@@ -19,6 +18,7 @@ import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.StopWatch;
 
 import hu.vanio.spring.boot.integration.ExampleIntegrationApplication;
 import hu.vanio.spring.boot.integration.client.JaxWsClient;
@@ -53,37 +53,67 @@ public class SampleIntegrationApplicationTests {
 
     @Test
     public void test() throws Exception {
-        String message = client.storeContent("test", new DataHandler(new URLDataSource(TEST_CONTENT_URL)));
+        StopWatch stopWatch = new StopWatch(this.getClass().getSimpleName());
+        //String message = client.storeContent("test", new DataHandler(new URLDataSource(TEST_CONTENT_URL)));
+        System.out.println("storeContent...");
+        stopWatch.start("storeContent");
+        String message = client.storeContent("test", new DataHandler(new FileDataSource("/home/gyszalai/apps/jboss-fuse-full-6.0.0.redhat-024.zip")));
+        stopWatch.stop();
         System.out.println("Server message: " + message);
         assertEquals("Content successfully stored", message);
         
+        System.out.println("loadContent...");
+        stopWatch.start("loadContent");
         DataHandler dh = client.loadContent("test");
+        stopWatch.stop();
         assertNotNull(dh);
-        File tempFile = new File(System.getProperty("java.io.tmpdir"), "spring_mtom_jaxws_tmp.bin");
-        tempFile.deleteOnExit();
-        long size = saveContentToFile(dh, tempFile);
+        long size = countBytes(dh);
+        System.out.println("Downloaded file size: " + size + " bytes");
         assertTrue(size > 0);
-        assertTrue(tempFile.length()>0);
+
+        System.out.println("\n" + stopWatch.prettyPrint());
     }
 
     /**
-     * Saves the specified content to the specified file
+     * Count the bytes of the content
      * 
      * @param content The content
-     * @param outFile The output file
-     * @throws IOException If an error occurs during saving
+     * @throws IOException If an error occurs
      */
-    static public long saveContentToFile(DataHandler content, File outFile) throws IOException {
+    static public long countBytes(DataHandler content) throws IOException {
         long size = 0;
         byte[] buffer = new byte[1024];
         try (InputStream is = content.getInputStream()) {
-            try (OutputStream outStream = new FileOutputStream(outFile)) {
+            CounterStream outStream = new CounterStream();
+            try {
                 for (int readBytes; (readBytes = is.read(buffer, 0, buffer.length)) > 0;) {
                     size += readBytes;
                     outStream.write(buffer, 0, readBytes);
                 }
+            } finally {
+                size = outStream.getBytesWritten();
             }
         }
         return size;
     }
+    
+    /**
+     * OutputStream implementation that counts bytes written to it
+     */
+    static private class CounterStream extends OutputStream {
+
+        private long bytesWritten;
+        
+        @Override
+        public void write(int b) throws IOException {
+            this.bytesWritten++;
+        }
+
+        public long getBytesWritten() {
+            return bytesWritten;
+        }
+        
+    }
+    
+    
 }

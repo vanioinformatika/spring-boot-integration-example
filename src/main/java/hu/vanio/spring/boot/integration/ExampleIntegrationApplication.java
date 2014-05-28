@@ -22,10 +22,10 @@ public class ExampleIntegrationApplication {
     }
     
     @Bean
-    public ServletRegistrationBean dispatcherServlet() {
-        MessageDispatcherServlet dispatcherServlet = new MessageDispatcherServlet();
-        dispatcherServlet.setTransformWsdlLocations(true);
-        ServletRegistrationBean servletDef = new ServletRegistrationBean(dispatcherServlet, "/contentStore", "*.wsdl");
+    public ServletRegistrationBean wsDispatcherServlet() {
+        MessageDispatcherServlet wsDispatcherServlet = new MessageDispatcherServlet();
+        wsDispatcherServlet.setTransformWsdlLocations(true);
+        ServletRegistrationBean servletDef = new ServletRegistrationBean(wsDispatcherServlet, "/contentStore", "*.wsdl");
         servletDef.addInitParameter("contextConfigLocation", "classpath:integration-context.xml");
         servletDef.setLoadOnStartup(1);
         return servletDef;

@@ -38,6 +38,8 @@ public class ContentRepositoryImpl implements ContentRepository{
     public void storeContent(String name, DataHandler content) throws IOException {
         File outFile = new File(this.fileStorePath, name + ".tmp");
         logger.info("Storing content in file: {}", outFile.getAbsolutePath());
+        InputStream dhis = content.getInputStream();
+        logger.info("*** DataHandler InputStream type: {}", dhis.getClass().getName());
         int i = 0;
         byte[] buffer = new byte[1024];
         try (InputStream is = content.getInputStream()) {
@@ -48,7 +50,6 @@ public class ContentRepositoryImpl implements ContentRepository{
             }
         }
         logger.info("Content stored.");
-        
     }
 
     /**
