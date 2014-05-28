@@ -23,4 +23,20 @@
         <property name="defaultEndpoint" ref="ws-inbound-gateway"/>
     </bean>
 
+    <!-- Interceptorok -->
+    <sws:interceptors>
+        <!-- uzenetek validalasa -->
+        <bean id="validatingInterceptor" class="org.springframework.ws.soap.server.endpoint.interceptor.PayloadValidatingInterceptor">
+            <property name="xsdSchema" ref="contentStoreSchema"/>
+            <property name="validateRequest" value="true"/>
+            <property name="validateResponse" value="false"/>
+            <property name="addValidationErrorDetail" value="true"/>
+            <property name="errorHandler">
+                <bean class="hu.vanio.spring.boot.integration.MtomAwareValidationErrorHandler">
+                    <property name="skipElements" value="Content"/>
+                </bean>
+            </property>
+        </bean>
+    </sws:interceptors>
+
 </beans>
