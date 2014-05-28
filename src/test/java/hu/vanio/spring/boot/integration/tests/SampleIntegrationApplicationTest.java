@@ -2,12 +2,9 @@ package hu.vanio.spring.boot.integration.tests;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 
 import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.activation.URLDataSource;
 
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -28,7 +25,7 @@ import hu.vanio.spring.boot.integration.client.JaxWsClient;
  *
  * @author Gyula Szalai <gyula.szalai@vanio.hu>
  */
-public class SampleIntegrationApplicationTests {
+public class SampleIntegrationApplicationTest {
 
     /** Spring context */
     private static ConfigurableApplicationContext context;
@@ -54,10 +51,12 @@ public class SampleIntegrationApplicationTests {
     @Test
     public void test() throws Exception {
         StopWatch stopWatch = new StopWatch(this.getClass().getSimpleName());
-        //String message = client.storeContent("test", new DataHandler(new URLDataSource(TEST_CONTENT_URL)));
+        long contentlength = 500000000;
+        
         System.out.println("storeContent...");
         stopWatch.start("storeContent");
-        String message = client.storeContent("test", new DataHandler(new FileDataSource("/home/gyszalai/apps/jboss-fuse-full-6.0.0.redhat-024.zip")));
+        DataHandler content = new DataHandler(new DummyDataSource("test", 65, contentlength));
+        String message = client.storeContent("test", content);
         stopWatch.stop();
         System.out.println("Server message: " + message);
         assertEquals("Content successfully stored", message);
@@ -68,12 +67,12 @@ public class SampleIntegrationApplicationTests {
         stopWatch.stop();
         assertNotNull(dh);
         long size = countBytes(dh);
-        System.out.println("Downloaded file size: " + size + " bytes");
-        assertTrue(size > 0);
+        System.out.printf("Downloaded file size: %,.2f kB", (double)size/1024);
+        assertTrue(size == contentlength);
 
         System.out.println("\n" + stopWatch.prettyPrint());
     }
-
+    
     /**
      * Count the bytes of the content
      * 
@@ -84,7 +83,7 @@ public class SampleIntegrationApplicationTests {
         long size = 0;
         byte[] buffer = new byte[1024];
         try (InputStream is = content.getInputStream()) {
-            CounterStream outStream = new CounterStream();
+            CounterOutputStream outStream = new CounterOutputStream();
             try {
                 for (int readBytes; (readBytes = is.read(buffer, 0, buffer.length)) > 0;) {
                     size += readBytes;
@@ -96,24 +95,5 @@ public class SampleIntegrationApplicationTests {
         }
         return size;
     }
-    
-    /**
-     * OutputStream implementation that counts bytes written to it
-     */
-    static private class CounterStream extends OutputStream {
-
-        private long bytesWritten;
-        
-        @Override
-        public void write(int b) throws IOException {
-            this.bytesWritten++;
-        }
-
-        public long getBytesWritten() {
-            return bytesWritten;
-        }
-        
-    }
-    
     
 }
