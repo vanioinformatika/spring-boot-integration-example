@@ -13,7 +13,7 @@
         <java.version>1.6</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>1.0.0.RC4</spring-boot.version>
+        <spring-boot.version>1.0.2.RELEASE</spring-boot.version>
         <spring.integration.version>3.0.1.RELEASE</spring.integration.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
