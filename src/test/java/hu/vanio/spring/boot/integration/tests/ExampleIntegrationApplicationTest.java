@@ -25,7 +25,7 @@ import hu.vanio.spring.boot.integration.client.JaxWsClient;
  *
  * @author Gyula Szalai <gyula.szalai@vanio.hu>
  */
-public class SampleIntegrationApplicationTest {
+public class ExampleIntegrationApplicationTest {
 
     /** Spring context */
     private static ConfigurableApplicationContext context;
@@ -51,7 +51,7 @@ public class SampleIntegrationApplicationTest {
     @Test
     public void test() throws Exception {
         StopWatch stopWatch = new StopWatch(this.getClass().getSimpleName());
-        long contentlength = 500000000;
+        long contentlength = 100000000L;
         
         System.out.println("storeContent...");
         stopWatch.start("storeContent");
