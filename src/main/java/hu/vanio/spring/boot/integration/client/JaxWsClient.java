@@ -1,9 +1,14 @@
 package hu.vanio.spring.boot.integration.client;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.HandlerResolver;
+import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
 
 import hu.vanio.springwsmtom.wstypes.ContentStoreHttpPort;
@@ -24,6 +29,8 @@ public class JaxWsClient {
     /** JAXB object factory */
     private final ObjectFactory objectFactory = new ObjectFactory();
     
+    WsSecurityHandler wsSecurityHandler = new WsSecurityHandler("Bert", "Ernie");
+    
     /**
      * Sends the specified content file to the WebService
      * 
@@ -32,8 +39,17 @@ public class JaxWsClient {
      * @return The message that tthe server sent back
      */
     public String storeContent(String name, DataHandler content) throws Exception {
-        ContentStoreHttpPortService contentStoreService = new ContentStoreHttpPortService();
-        ContentStoreHttpPort contentStorePort = contentStoreService.getContentStoreHttpPortSoap11();
+        ContentStoreHttpPortService service = new ContentStoreHttpPortService();
+        
+        service.setHandlerResolver(new HandlerResolver() {
+            public List<Handler> getHandlerChain(PortInfo portInfo) {
+                List<Handler> handlerList = new ArrayList<Handler>();
+                handlerList.add(wsSecurityHandler);
+                return handlerList;
+            }
+        });
+        
+        ContentStoreHttpPort contentStorePort = service.getContentStoreHttpPortSoap11();
         SOAPBinding binding = (SOAPBinding) ((BindingProvider) contentStorePort).getBinding();
         binding.setMTOMEnabled(true);
 
@@ -54,6 +70,15 @@ public class JaxWsClient {
      */
     public DataHandler loadContent(String name) throws IOException {
         ContentStoreHttpPortService service = new ContentStoreHttpPortService();
+        
+        service.setHandlerResolver(new HandlerResolver() {
+            public List<Handler> getHandlerChain(PortInfo portInfo) {
+                List<Handler> handlerList = new ArrayList<Handler>();
+                handlerList.add(wsSecurityHandler);
+                return handlerList;
+            }
+        });
+        
         ContentStoreHttpPort loadContentPort = service.getContentStoreHttpPortSoap11();
         SOAPBinding binding = (SOAPBinding) ((BindingProvider) loadContentPort).getBinding();
         binding.setMTOMEnabled(true);
