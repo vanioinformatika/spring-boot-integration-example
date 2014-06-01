@@ -23,9 +23,19 @@
         <property name="defaultEndpoint" ref="ws-inbound-gateway"/>
     </bean>
 
+    <!-- a simple callback handler to configure users and passwords with an in-memory Properties object. -->
+    <bean id="callbackHandler" class="org.springframework.ws.soap.security.wss4j.callback.SimplePasswordValidationCallbackHandler">
+        <property name="users">
+            <props>
+                <prop key="Bert">Ernie</prop>
+            </props>
+        </property>
+    </bean>
+
     <!-- Interceptorok -->
     <sws:interceptors>
-        <!-- uzenetek validalasa -->
+        
+        <!-- Validation -->
         <bean id="validatingInterceptor" class="org.springframework.ws.soap.server.endpoint.interceptor.PayloadValidatingInterceptor">
             <property name="xsdSchema" ref="contentStoreSchema"/>
             <property name="validateRequest" value="true"/>
@@ -37,6 +47,12 @@
                 </bean>
             </property>
         </bean>
+        
+        <!-- WS-Security -->
+        <bean class="org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor">
+            <property name="validationActions" value="UsernameToken"/>
+            <property name="validationCallbackHandler" ref="callbackHandler" />
+        </bean>
     </sws:interceptors>
-
+ 
 </beans>

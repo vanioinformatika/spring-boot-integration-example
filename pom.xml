@@ -14,7 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>1.0.2.RELEASE</spring-boot.version>
-        <spring.integration.version>3.0.1.RELEASE</spring.integration.version>
+        <spring.integration.version>4.0.1.RELEASE</spring.integration.version>
+        <spring.ws.version>2.2.0.RELEASE</spring.ws.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
@@ -27,15 +28,15 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-actuator</artifactId>
+            <artifactId>spring-boot-starter-security</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
             <version>${spring-boot.version}</version>
-            <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-xml</artifactId>
@@ -45,6 +46,11 @@
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-ws</artifactId>
             <version>${spring.integration.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-security</artifactId>
+            <version>${spring.ws.version}</version>
         </dependency>
         
         <dependency>
@@ -67,7 +73,12 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
@@ -75,7 +86,11 @@
             <type>jar</type>
             <scope>test</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>org.apache.ws.security</groupId>
+            <artifactId>wss4j</artifactId>
+            <version>1.6.10</version>
+        </dependency>
     </dependencies>
     
     <build>
