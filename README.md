@@ -1,7 +1,9 @@
 Spring-integration project botstrapped with Spring-boot
 =======================================================
 
-SpringBoot integration example with an MTOM enabled webservice gateway.
+SpringBoot application with spring-integration example with an MTOM enabled webservice endpoint.
+
+It can handle large (hundreds of MBs) attachments.
 
 To try out:
 -----------
@@ -13,4 +15,6 @@ To try out:
 1. go to the project directory and issue mvn clean spring-boot:run
 1. open a browser and enter the following address: http://localhost:8080/contentStore.wsdl
 1. use the WSDL to create a client of your preference
+
+NOTE: When running the example (other than the test) don't forget to set *-Dsaaj.use.mimepull=true*
 
