@@ -3,7 +3,7 @@ Spring-integration project botstrapped with Spring-boot
 
 SpringBoot application with spring-integration example with an MTOM enabled webservice endpoint.
 
-It can handle large (hundreds of MBs) attachments.
+It can handle large (hundreds of MBs) attachments, so far it only works with a CXF backed JAX-WS client.
 
 To try out:
 -----------
@@ -17,4 +17,4 @@ To try out:
 1. use the WSDL to create a client of your preference
 
 NOTE: When running the example (other than the test) don't forget to set *-Dsaaj.use.mimepull=true*
-
+---------------------------------------------------------------------------------------------------
