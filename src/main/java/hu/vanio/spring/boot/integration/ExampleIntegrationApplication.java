@@ -26,25 +26,44 @@ import org.springframework.xml.xsd.XsdSchema;
 @ImportResource("classpath:/integration-context.xml")
 public class ExampleIntegrationApplication {
 
+    /** URL mappings used by WS endpoints */
+    private static final String[] WS_URL_MAPPINGS = {"/contentStore", "*.wsdl", "*.xsd"};
+    
     public static void main(String[] args) throws Exception {
         SpringApplication.run(ExampleIntegrationApplication.class, args);
     }
 
+    /**
+     * A new dispatcher servlet instance with a different name that handles SOAP webservice requests. 
+     * This way all production-ready services (/health, /metrics, /beans etc) will be handled 
+     * by the original autoconfigured dispatcher servlet (dispatcherServlet) instance.
+     * 
+     * @param context The application context
+     * @return Servlet registration definition
+     */
     @Bean
     public ServletRegistrationBean wsDispatcherServlet(ApplicationContext context) {
         MessageDispatcherServlet wsDispatcherServlet = new MessageDispatcherServlet();
         wsDispatcherServlet.setApplicationContext(context);
         wsDispatcherServlet.setTransformWsdlLocations(true);
-        ServletRegistrationBean servletDef = new ServletRegistrationBean(wsDispatcherServlet, "/contentStore", "*.wsdl");
+        ServletRegistrationBean servletDef = new ServletRegistrationBean(wsDispatcherServlet, WS_URL_MAPPINGS);
         servletDef.setLoadOnStartup(1);
         return servletDef;
     }
 
+    /**  
+     * Publishing WSDL
+     * @return The WSDL definition
+     */
     @Bean
     public WsdlDefinition contentStore() {
         return new SimpleWsdl11Definition(new ClassPathResource("/contentStore.wsdl"));
     }
 
+    /**  
+     * Publishing XML schema
+     * @return The XSD definition
+     */
     @Bean
     public XsdSchema contentStoreSchema() {
         SimpleXsdSchema xsdSchema = new SimpleXsdSchema();
@@ -52,6 +71,10 @@ public class ExampleIntegrationApplication {
         return xsdSchema;
     }
 
+    /**  
+     * Shared JAXB marshaller/unmarshaller instance
+     * @return The marshaller/unmarshaller instance
+     */
     @Bean
     public Object marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
@@ -60,11 +83,18 @@ public class ExampleIntegrationApplication {
         return marshaller;
     }
 
+    /**
+     * WEB security config customizations
+     * @return The config customizer object
+     */
     @Bean
     public ApplicationSecurity applicationSecurity() {
         return new ApplicationSecurity();
     }
             
+    /**
+     * Implements WEB security config customizations to disable basic authentication on webservice endpoint URLs
+     */
     @Order(Ordered.LOWEST_PRECEDENCE - 8)
     public static class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 
@@ -73,7 +103,7 @@ public class ExampleIntegrationApplication {
             http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/contentStore", "*.wsdl").permitAll();
+                .antMatchers(WS_URL_MAPPINGS).permitAll(); // disable authentication on the URLs that are used by WS endpoints
         }
     }
 
