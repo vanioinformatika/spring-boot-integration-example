@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A SOAP üzenetbe beilleszt a megadott autentikációs adatokat tartalmazó WS-Security SOAP header-t
- * 
+ * Inserts a WS-Security header into the SOAP message to be sent
+  * 
  * @author Gyula Szalai <gyula.szalai@vanio.hu>
  */
 public class WsSecurityHandler implements SOAPHandler<SOAPMessageContext> {
@@ -25,29 +25,34 @@ public class WsSecurityHandler implements SOAPHandler<SOAPMessageContext> {
     /** Logger */
     final static Logger logger = LoggerFactory.getLogger(WsSecurityHandler.class);
     
-    /** A felhasználónév */
+    /** Username */
     private final String userName;
-    /** A jelszó hash */
+    /** Password */
     private final String password;
 
     /**
-     * Konstruktor
-     * @param userName A felhasználónév
-     * @param password A jelszó hash
+     * Constructs a new instance
+     * @param userName Username
+     * @param password Password
      */
     public WsSecurityHandler(String userName, String password) {
         this.userName = userName;
         this.password = password;
     }
     
+    /**
+     * Entry point
+     * @param context SOAP message context
+     * @return true, if processing may continue
+     */
+    @Override
     public boolean handleMessage(SOAPMessageContext context) {
-        System.out.println("***************************************- WS-Security handler running");
         String prefixUri = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-";
         String uri = prefixUri + "wssecurity-secext-1.0.xsd";
         String uta = prefixUri + "wssecurity-utility-1.0.xsd";
         String ta = prefixUri + "username-token-profile-1.0#PasswordText";
         Boolean outboundProperty = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-        if (outboundProperty.booleanValue()) {
+        if (outboundProperty) {
             try {
                 SOAPEnvelope envelope = context.getMessage().getSOAPPart().getEnvelope();
                 SOAPFactory factory = SOAPFactory.newInstance();
@@ -70,20 +75,23 @@ public class WsSecurityHandler implements SOAPHandler<SOAPMessageContext> {
                 }
                 header.addChildElement(securityElem);
             } catch (SOAPException e) {
-                logger.error("Hiba a WsSecurityHandler-ben: ", e);
+                throw new RuntimeException(e);
             }
         }
         return true;
     }
 
+    @Override
     public Set<QName> getHeaders() {
         return null;
     }
 
+    @Override
     public boolean handleFault(SOAPMessageContext context) {
         return false;
     }
 
+    @Override
     public void close(MessageContext context) {
     }
     

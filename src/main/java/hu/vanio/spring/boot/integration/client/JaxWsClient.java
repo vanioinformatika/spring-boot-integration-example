@@ -29,7 +29,8 @@ public class JaxWsClient {
     /** JAXB object factory */
     private final ObjectFactory objectFactory = new ObjectFactory();
     
-    WsSecurityHandler wsSecurityHandler = new WsSecurityHandler("Bert", "Ernie");
+    /** Inserts a WS-Security header to the SOAP message */
+    private final WsSecurityHandler wsSecurityHandler = new WsSecurityHandler("Bert", "Ernie");
     
     /**
      * Sends the specified content file to the WebService
@@ -38,12 +39,13 @@ public class JaxWsClient {
      * @param content The content to be stored
      * @return The message that tthe server sent back
      */
-    public String storeContent(String name, DataHandler content) throws Exception {
+    public String storeContent(String name, DataHandler content) {
         ContentStoreHttpPortService service = new ContentStoreHttpPortService();
         
         service.setHandlerResolver(new HandlerResolver() {
+            @Override
             public List<Handler> getHandlerChain(PortInfo portInfo) {
-                List<Handler> handlerList = new ArrayList<Handler>();
+                List<Handler> handlerList = new ArrayList<>();
                 handlerList.add(wsSecurityHandler);
                 return handlerList;
             }
@@ -72,8 +74,9 @@ public class JaxWsClient {
         ContentStoreHttpPortService service = new ContentStoreHttpPortService();
         
         service.setHandlerResolver(new HandlerResolver() {
+            @Override
             public List<Handler> getHandlerChain(PortInfo portInfo) {
-                List<Handler> handlerList = new ArrayList<Handler>();
+                List<Handler> handlerList = new ArrayList<>();
                 handlerList.add(wsSecurityHandler);
                 return handlerList;
             }
