@@ -10,23 +10,22 @@ import org.springframework.stereotype.Component;
 import org.springframework.xml.validation.ValidationErrorHandler;
 
 /**
- *
+ * Validation error handler, that ignores validation errors of the elements specified in skipElements
+ * 
  * @author Gyula Szalai <gyula.szalai@vanio.hu>
  */
 @Component
 public class MtomAwareValidationErrorHandler implements ValidationErrorHandler {
     
+    /** Validation errors */
     private final List errors = new ArrayList();
     
+    /** Element names to ignore during validation */
     private String [] skipElements;
     
     @Override
     public SAXParseException[] getErrors() {
         return (SAXParseException[]) errors.toArray(new SAXParseException[errors.size()]);
-    }
-    
-    public void setSkipElements(String[] skipElements){
-        this.skipElements = skipElements; 
     }
     
     @Override
@@ -48,6 +47,15 @@ public class MtomAwareValidationErrorHandler implements ValidationErrorHandler {
     @Override
     public void fatalError(SAXParseException ex) throws SAXException {
         errors.add(ex);
+    }
+    
+    /** 
+     * Element names to ignore during validation
+     * 
+     * @param skipElements The new value
+     */
+    public void setSkipElements(String[] skipElements){
+        this.skipElements = skipElements; 
     }
     
 }
