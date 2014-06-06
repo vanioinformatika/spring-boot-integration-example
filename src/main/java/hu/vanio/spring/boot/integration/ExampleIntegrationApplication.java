@@ -3,9 +3,11 @@ package hu.vanio.spring.boot.integration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -21,6 +23,7 @@ import org.springframework.xml.xsd.XsdSchema;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
+@ImportResource("classpath:/integration-context.xml")
 public class ExampleIntegrationApplication {
 
     public static void main(String[] args) throws Exception {
@@ -28,11 +31,11 @@ public class ExampleIntegrationApplication {
     }
 
     @Bean
-    public ServletRegistrationBean wsDispatcherServlet() {
+    public ServletRegistrationBean wsDispatcherServlet(ApplicationContext context) {
         MessageDispatcherServlet wsDispatcherServlet = new MessageDispatcherServlet();
+        wsDispatcherServlet.setApplicationContext(context);
         wsDispatcherServlet.setTransformWsdlLocations(true);
         ServletRegistrationBean servletDef = new ServletRegistrationBean(wsDispatcherServlet, "/contentStore", "*.wsdl");
-        servletDef.addInitParameter("contextConfigLocation", "classpath:integration-context.xml");
         servletDef.setLoadOnStartup(1);
         return servletDef;
     }
